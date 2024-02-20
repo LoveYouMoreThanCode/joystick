@@ -28,29 +28,30 @@ public:
       if (!event.isAxis()) {
         continue;
       }
-      if (event.number == 0) {
+      if (event.number == 4) {
         x_ = event.value;
-      } else if (event.number == 1) {
+      } else if (event.number == 5) {
         y_ = event.value;
       }
     }
+    printf("x=%d y=%d\n",x_,y_);
     return make_cmd();
   }
 
 private:
   std::string make_cmd() {
-    if (y_ == 0) {
+    if (x_ == 0 && y_== 0) {
       return "brake";
     }
-    if (y_ < 0) {
-      return "backward";
-    }
-    if (x_ == 0) {
+    if (x_ < 0) {
       return "forward";
-    } else if (x_ < 0) {
-      return "left";
-    } else {
+    }
+    if (y_ == 0) {
+      return "backward";
+    } else if (y_ < 0) {
       return "right";
+    } else {
+      return "left";
     }
   }
 
@@ -61,6 +62,7 @@ private:
 };
 
 int main(int argc, char **argv) {
+#if 0
   // Create an instance of Joystick
   Joystick joystick("/dev/input/js0");
 
@@ -85,10 +87,12 @@ int main(int argc, char **argv) {
       }
     }
   }
+#endif
 
   JoystickDirCommand js_cmd("/dev/input/js0");
   while (true) {
     std::string cmd = js_cmd.scan_cmd();
-    sleep(1);
+    printf("SCAN a new command:%s.\n",cmd.c_str());
+    sleep(2);
   }
 }
