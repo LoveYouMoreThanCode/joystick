@@ -163,14 +163,15 @@ int main() {
     } else if (cmd == "forward" || cmd == "f") {
       std::cout << "............前进200ms................" << std::endl;
       my_car.move_forward();
-      lguSleep(0.2);
+      lguSleep(0.1);
     } else if (cmd == "backward" || cmd == "b") {
       std::cout << "............后退200ms................" << std::endl;
       my_car.move_backward();
-      lguSleep(0.2);
+      lguSleep(0.1);
     } else {
       std::cout << "............刹车..............." << std::endl;
       my_car.brake();
+      lguSleep(0.1);
     }
   }
   //结束
