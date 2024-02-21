@@ -120,7 +120,8 @@ int main() {
     std::cout<<"failed to init my car, rc:"<<rc<<std::endl;
     return rc;
   }
-  Commander *commander = make_commander("joystick");
+  std::unique_ptr<Commander, void (*)(Commander *)> commander(
+      make_commander("joystick"), destroy_commander);
   while (true) {
     //保持一定的控制周期
     lguSleep(0.1);
@@ -149,7 +150,6 @@ int main() {
       my_car.brake();
     }
   }
-  destroy_commander(commander);
   //结束
   return 0;
 }
