@@ -2,35 +2,11 @@
 #include <unistd.h>
 #include "test.h"
 
-#define USE_REAL_GPIO
-#ifdef USE_REAL_GPIO
 extern "C" {
 #include "lgpio.h"
 }
-#else
-int lgGpioClaimOutput(int handle, int lFlags, int gpio, int level) {
-  std::cout << "claim gpio:" << gpio << " as output with level:" << level
-            << std::endl;
-  return 0;
-}
-int lgGpioWrite(int handle, int gpio, int level) {
-  std::cout << "set gpio:" << gpio << " to level:" << level << std::endl;
-  return 0;
-}
-int lgGpiochipOpen(int gpioDev) {
-  int handle_fd = 100;
-  std::cout << "open gpioDEV:" << gpioDev << " handle_fd:" << handle_fd
-            << std::endl;
-  return handle_fd;
-}
-void lguSleep(double sleepSecs) {
-  usleep(sleepSecs*1000UL*1000UL);
-  std::cout << "sleep..., time:" << (sleepSecs * 1000UL) << " ms" << std::endl;
-}
-#endif
 #include <cassert>
 #include <unordered_map>
-
 
 class Motor {
 public:
@@ -144,7 +120,7 @@ int main() {
     std::cout<<"failed to init my car, rc:"<<rc<<std::endl;
     return rc;
   }
-  JoystickDirCommand commander("/dev/input/js0");
+  Commander *commander = make_commander("joystick");
   while (true) {
     //保持一定的控制周期
     lguSleep(0.1);
@@ -154,15 +130,7 @@ int main() {
     std::cout
         << "...........等待输入指令left(l)/right(r)/forward(f)/backward(b)/brake(*)....."
         << std::endl;
-    std::string cmd;
-
-    //如果使用命令行输入命令，则define USE_COMMAND_LINE_CMD
-    //如果使用joystick输入命令，保持现状即可，默认使用joystick作为命令行输入
-    #ifdef USE_COMMAND_LINE_CMD
-    std::cin >> cmd;
-    #else
-    cmd = commander.scan_cmd();
-    #endif
+    std::string cmd = commander->scan_cmd();
 
     if (cmd == "left" || cmd == "l") {
       std::cout << "............普通左转100ms............" << std::endl;
@@ -181,6 +149,7 @@ int main() {
       my_car.brake();
     }
   }
+  destroy_commander(commander);
   //结束
   return 0;
 }

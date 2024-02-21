@@ -11,18 +11,17 @@
 // limitations under the License.
 //
 // Copyright Drew Noakes 2013-2016
-
+#include "test.h"
 #include "joystick.hh"
 #include <cassert>
-#include <unistd.h>
 
-
-class JoystickDirCommand {
+class JsCommander: public Commander {
 public:
-  JoystickDirCommand(std::string path) : js_(path) {}
-  ~JoystickDirCommand() {}
-  std::string scan_cmd() {
+  JsCommander(std::string path) : js_(path) {
     assert(js_.isFound());
+  }
+  ~JsCommander() {}
+  std::string scan_cmd() override{
     JoystickEvent event;
     while (js_.sample(&event)) {
       if (!event.isAxis()) {
@@ -61,38 +60,26 @@ private:
   Joystick js_;
 };
 
-int main(int argc, char **argv) {
-#if 0
-  // Create an instance of Joystick
-  Joystick joystick("/dev/input/js0");
-
-  // Ensure that it was found and that we can use it
-  if (!joystick.isFound()) {
-    printf("open failed.\n");
-    exit(1);
+class TerminalCommander :public Commander {
+  public:
+  TerminalCommander(){}
+  ~TerminalCommander(){
   }
-
-  while (true) {
-    // Restrict rate
-    usleep(1000);
-
-    // Attempt to sample an event from the joystick
-    JoystickEvent event;
-    if (joystick.sample(&event)) {
-      if (event.isButton()) {
-        printf("Button %u is %s\n", event.number,
-               event.value == 0 ? "up" : "down");
-      } else if (event.isAxis()) {
-        printf("Axis %u is at position %d\n", event.number, event.value);
-      }
-    }
+  std::string scan_cmd()override {
+    std::string cmd;
+    std::cin>>cmd;
+    return cmd;
   }
-#endif
+};
 
-  JoystickDirCommand js_cmd("/dev/input/js0");
-  while (true) {
-    std::string cmd = js_cmd.scan_cmd();
-    printf("SCAN a new command:%s.\n",cmd.c_str());
-    sleep(2);
+Commander *make_commander(std::string type) {
+  if (type == "joystick") {
+    return new JsCommander("/dev/input/js0");
+  }else if (type == "terminal") {
+    return new TerminalCommander();
   }
+  return nullptr;
+}
+void destroy_commander(Commander *cmd) {
+  delete cmd;
 }
