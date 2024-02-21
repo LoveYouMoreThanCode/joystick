@@ -6,6 +6,7 @@ extern "C" {
 #include "lgpio.h"
 }
 #include <cassert>
+#include <memory>
 #include <unordered_map>
 
 class Motor {

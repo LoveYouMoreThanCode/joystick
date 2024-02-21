@@ -13,6 +13,7 @@
 // Copyright Drew Noakes 2013-2016
 
 #include <unistd.h>
+#include <string>
 
 class Commander {
 public:

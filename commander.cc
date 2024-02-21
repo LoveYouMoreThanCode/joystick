@@ -11,7 +11,7 @@
 // limitations under the License.
 //
 // Copyright Drew Noakes 2013-2016
-#include "test.h"
+#include "commander.h"
 #include "joystick.hh"
 #include <cassert>
 
