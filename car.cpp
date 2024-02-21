@@ -43,8 +43,8 @@ public:
     std::cout << "motor:" << name_ << " brake,"
               << " ctl:" << ctl_ << " p1:" << p1_ << " p2:" << p2_ << std::endl;
     // AT8236驱动方式：IN1=1 IN2=1 --> 刹车
-    lgGpioWrite(ctl_, p1_, 1);
-    lgGpioWrite(ctl_, p2_, 1);
+    lgGpioWrite(ctl_, p1_, 0);
+    lgGpioWrite(ctl_, p2_, 0);
   }
 
 private:
@@ -111,6 +111,7 @@ public:
     motors_["right_front"].move_backward();
   }
   void turn_left(bool spin = false) {
+    spin = true;
     motors_["left_rear"].move_forward();
     motors_["left_front"].move_forward();
     if (spin) {
@@ -122,6 +123,7 @@ public:
     }
   }
   void turn_right(bool spin = false) {
+    spin = true;
     motors_["right_rear"].move_forward();
     motors_["right_front"].move_forward();
     if (spin) {
@@ -153,7 +155,7 @@ int main() {
     return rc;
   }
   std::unique_ptr<Commander, void (*)(Commander *)> commander(
-      make_commander("terminal"), destroy_commander);
+      make_commander("joystick"), destroy_commander);
   while (true) {
     //保持一定的控制周期
     lguSleep(0.1);
