@@ -63,49 +63,80 @@ public:
     assert(ctl_handle_ >= 0);
     uint32_t left_motor_p1 = 17;
     uint32_t left_motor_p2 = 27;
-    Motor left(ctl_handle_, "left", left_motor_p1, left_motor_p2);
+    Motor left(ctl_handle_, "left_rear", left_motor_p1, left_motor_p2);
     int rc = left.init();
     if (rc) {
       return -1;
     }
     uint32_t right_motor_p1 = 23;
     uint32_t right_motor_p2 = 24;
-    Motor right(ctl_handle_, "right", right_motor_p1, right_motor_p2);
+    Motor right(ctl_handle_, "right_rear", right_motor_p1, right_motor_p2);
     rc = right.init();
     if (rc) {
       return rc;
     }
-    motors_["left"] = left;
-    motors_["right"] = right;
+    motors_["left_rear"] = left;
+    motors_["right_rear"] = right;
+
+    //add two mor motors here
+    uint32_t left_front_p1 = 5;
+    uint32_t left_front_p2 = 6;
+    Motor left1(ctl_handle_, "left_front", left_front_p1, left_front_p2);
+    rc = left1.init();
+    if (rc) {
+      return -1;
+    }
+    uint32_t right_front_p1 = 20;
+    uint32_t right_front_p2 = 21;
+    Motor right1(ctl_handle_, "right_front", right_front_p1, right_front_p2);
+    rc = right1.init();
+    if (rc) {
+      return rc;
+    }
+    motors_["left_front"] = left1;
+    motors_["right_front"] = right1;
+
     return 0;
   }
   void move_forward() {
-    motors_["left"].move_forward();
-    motors_["right"].move_forward();
+    motors_["left_rear"].move_forward();
+    motors_["right_rear"].move_forward();
+    motors_["left_front"].move_forward();
+    motors_["right_front"].move_forward();
   }
   void move_backward() {
-    motors_["left"].move_backward();
-    motors_["right"].move_backward();
+    motors_["left_rear"].move_backward();
+    motors_["right_rear"].move_backward();
+    motors_["left_front"].move_backward();
+    motors_["right_front"].move_backward();
   }
   void turn_left(bool spin = false) {
-    motors_["left"].move_forward();
+    motors_["left_rear"].move_forward();
+    motors_["left_front"].move_forward();
     if (spin) {
-      motors_["right"].move_backward();
+      motors_["right_rear"].move_backward();
+      motors_["right_front"].move_backward();
     } else {
-      motors_["right"].brake();
+      motors_["right_rear"].brake();
+      motors_["right_front"].brake();
     }
   }
   void turn_right(bool spin = false) {
-    motors_["right"].move_forward();
+    motors_["right_rear"].move_forward();
+    motors_["right_front"].move_forward();
     if (spin) {
-      motors_["left"].move_backward();
+      motors_["left_rear"].move_backward();
+      motors_["left_front"].move_backward();
     } else {
-      motors_["left"].brake();
+      motors_["left_rear"].brake();
+      motors_["left_front"].brake();
     }
   }
   void brake() {
-    motors_["left"].brake();
-    motors_["right"].brake();
+    motors_["left_rear"].brake();
+    motors_["right_rear"].brake();
+    motors_["left_front"].brake();
+    motors_["right_front"].brake();
   }
 
 private:
@@ -122,7 +153,7 @@ int main() {
     return rc;
   }
   std::unique_ptr<Commander, void (*)(Commander *)> commander(
-      make_commander("joystick"), destroy_commander);
+      make_commander("terminal"), destroy_commander);
   while (true) {
     //保持一定的控制周期
     lguSleep(0.1);
