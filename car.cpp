@@ -146,32 +146,39 @@ int main() {
   }
   JoystickDirCommand commander("/dev/input/js0");
   while (true) {
+    //保持一定的控制周期
+    lguSleep(0.1);
+
+    //命令输入提示
     std::cout << std::endl << std::endl;
     std::cout
         << "...........等待输入指令left(l)/right(r)/forward(f)/backward(b)/brake(*)....."
         << std::endl;
-    std::string cmd = commander.scan_cmd();
-    //std::cin >> cmd;
+    std::string cmd;
+
+    //如果使用命令行输入命令，则define USE_COMMAND_LINE_CMD
+    //如果使用joystick输入命令，保持现状即可，默认使用joystick作为命令行输入
+    #ifdef USE_COMMAND_LINE_CMD
+    std::cin >> cmd;
+    #else
+    cmd = commander.scan_cmd();
+    #endif
+
     if (cmd == "left" || cmd == "l") {
       std::cout << "............普通左转100ms............" << std::endl;
       my_car.turn_left();
-      lguSleep(0.1);
     } else if (cmd == "right" || cmd == "r") {
       std::cout << "............普通右转100ms............" << std::endl;
       my_car.turn_right();
-      lguSleep(0.1);
     } else if (cmd == "forward" || cmd == "f") {
       std::cout << "............前进200ms................" << std::endl;
       my_car.move_forward();
-      lguSleep(0.1);
     } else if (cmd == "backward" || cmd == "b") {
       std::cout << "............后退200ms................" << std::endl;
       my_car.move_backward();
-      lguSleep(0.1);
     } else {
       std::cout << "............刹车..............." << std::endl;
       my_car.brake();
-      lguSleep(0.1);
     }
   }
   //结束
