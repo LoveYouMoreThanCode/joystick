@@ -1,6 +1,6 @@
 #include <iostream>
 #include <unistd.h>
-#include "test.h"
+#include "commander.h"
 
 extern "C" {
 #include "lgpio.h"
