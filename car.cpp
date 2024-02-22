@@ -10,8 +10,6 @@ extern "C" {
 #include <memory>
 #include <unordered_map>
 
-int lgTxPwm(int handle, int gpio, float pwmFrequency, float pwmDutyCycle,
-            int pwmOffset, int pwmCycles);
 #define MOTOR_DRIVE_PWM_FREQ_HZ 1000 /*Hz*/
 class Motor {
 public:
@@ -156,6 +154,11 @@ public:
     motors_["left_front"].brake();
     motors_["right_front"].brake();
   }
+  void set_engine(uint32_t f_speed, uint32_t b_speed, uint32_t t_speed) {
+    forward_speed_ = f_speed;
+    backward_speed_ = b_speed;
+    turn_speed_ = t_speed;
+  }
 
 private:
   int32_t ctl_handle_;
@@ -172,8 +175,15 @@ int main() {
     std::cout << "failed to init my car, rc:" << rc << std::endl;
     return rc;
   }
+#if 0
   std::unique_ptr<Commander, void (*)(Commander *)> commander(
       make_commander("joystick"), destroy_commander);
+  my_car.set_engine(90, 50, 30);
+#else
+  std::unique_ptr<Commander, void (*)(Commander *)> commander(
+      make_commander("infrared"), destroy_commander);
+  my_car.set_engine(30, 15, 5);
+#endif
   while (true) {
     // 保持一定的控制周期
     lguSleep(0.1);
