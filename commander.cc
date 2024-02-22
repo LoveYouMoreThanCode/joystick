@@ -17,11 +17,10 @@
 
 class JsCommander: public Commander {
 public:
-  JsCommander(std::string path) : js_(path) {
-    assert(js_.isFound());
-  }
+  JsCommander(std::string path) : js_(path), path_(path) {}
   ~JsCommander() {}
   std::string scan_cmd() override{
+    reload_if_need();
     JoystickEvent event;
     while (js_.sample(&event)) {
       if (!event.isAxis()) {
@@ -53,10 +52,18 @@ private:
       return "left";
     }
   }
+  void reload_if_need() {
+    if(js_.isFound()) {
+      return;
+    }
+    js_.~Joystick();
+    new (&js_)Joystick(path_);
+  }
 
 private:
   int x_{0};
   int y_{0};
+  std::string path_;
   Joystick js_;
 };
 
