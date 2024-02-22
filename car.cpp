@@ -202,10 +202,10 @@ int main() {
       std::cout << "............普通右转100ms............" << std::endl;
       my_car.turn_right();
     } else if (cmd == "forward" || cmd == "f") {
-      std::cout << "............前进200ms................" << std::endl;
+      std::cout << "............前进100ms................" << std::endl;
       my_car.move_forward();
     } else if (cmd == "backward" || cmd == "b") {
-      std::cout << "............后退200ms................" << std::endl;
+      std::cout << "............后退100ms................" << std::endl;
       my_car.move_backward();
     } else {
       std::cout << "............刹车..............." << std::endl;
