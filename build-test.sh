@@ -1,1 +1,1 @@
-g++ main.cpp car.cpp joystick.cc commander.cc -llgpio -std=c++0x -Wall -o test
+g++ main.cpp car.cpp joystick.cpp commander.cpp -llgpio -std=c++0x -Wall -o toy_car
